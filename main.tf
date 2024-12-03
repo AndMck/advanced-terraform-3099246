@@ -13,6 +13,15 @@ provider "azurerm" {
   features {}
 }
 
+resource "azurerm_resource_group" "myadvanced-rg" {
+  name     = "advanced-resources-rg"
+  location = "West Europe"
+  tags = {
+    environment  = "dev"
+    auto-delete  = "true"
+    #delete-after = data.time_offset.delete_after_time.rfc333 # Example: 4 hours from now
+  }
+}
 # ### NETWORK
 # resource "azurerm_virtual_network" "default_vnet" {
 #   name                = "default-vnet"
