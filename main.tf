@@ -17,62 +17,65 @@ resource "azurerm_resource_group" "myadvanced-rg" {
   name     = "advanced-resources-rg"
   location = "West Europe"
   tags = {
-    environment  = "dev"
-    auto-delete  = "true"
+    environment = "dev"
+    auto-delete = "true"
     #delete-after = data.time_offset.delete_after_time.rfc333 # Example: 4 hours from now
   }
 }
-# ### NETWORK
-# resource "azurerm_virtual_network" "default_vnet" {
-#   name                = "default-vnet"
-#   location            = "West Europe"
-#   resource_group_name = azurerm_resource_group.myrg-rg.name
-#   address_space       = ["10.127.0.0/16"]
 
-#   tags = {
-#     environment = "dev"
-#   }
-# }
+### NETWORK
+resource "azurerm_virtual_network" "linkedin_vnet" {
+  name                = "linkedin-vnet"
+  location            = "West Europe"
+  resource_group_name = azurerm_resource_group.myadvanced-rg.name
+  address_space       = ["10.127.0.0/16"]
 
-# ## SUBNET
-# resource "azurerm_subnet" "subnet_1" {
-#   name                 = "subnet1"
-#   resource_group_name  = azurerm_resource_group.myrg-rg.name
-#   virtual_network_name = azurerm_virtual_network.default_vnet.name
-#   address_prefixes     = ["10.127.0.0/20"]
+  tags = {
+    environment = "dev"
+    auto-delete = "true"
+  }
+}
 
-#   delegation {
-#     name = "subnetDelegation"
-#     service_delegation {
-#       name = "Microsoft.Network/virtualNetworks"
-#     }
-#   }
-# }
+## SUBNET
+resource "azurerm_subnet" "linkedin_subnet_1" {
+  name                 = "linkedin_subnet1"
+  resource_group_name  = azurerm_resource_group.myadvanced-rg.name
+  virtual_network_name = azurerm_virtual_network.linkedin_vnet.name
+  address_prefixes     = ["10.127.0.0/20"]
 
-# ### FIREWALL (NSG)
-# resource "azurerm_network_security_group" "default_nsg" {
-#   name                = "default-nsg"
-#   location            = azurerm_resource_group.myrg-rg.location
-#   resource_group_name = azurerm_resource_group.myrg-rg.name
+  delegation {
+    name = "subnetDelegation"
+    service_delegation {
+      name = "Microsoft.Network/virtualNetworks"
+    }
+  }
+}
 
-#   tags = {
-#     environment = "dev"
-#   }
-# }
+### FIREWALL (NSG)
+resource "azurerm_network_security_group" "linkedin_nsg" {
+  name                = "linkedin-nsg"
+  location            = azurerm_resource_group.myadvanced-rg.location
+  resource_group_name = azurerm_resource_group.myadvanced-rg.name
 
-# resource "azurerm_network_security_rule" "allow_icmp_and_tcp" {
-#   name                        = "allow-icmp-and-tcp"
-#   priority                    = 100
-#   direction                   = "Inbound"
-#   access                      = "Allow"
-#   protocol                    = "*"
-#   source_port_range           = "*"
-#   destination_port_ranges     = ["80", "8080", "1000-2000", "22"]
-#   source_address_prefix       = "*"
-#   destination_address_prefix  = "*"
-#   resource_group_name         = azurerm_resource_group.myrg-rg.name
-#   network_security_group_name = azurerm_network_security_group.default_nsg.name
-# }
+  tags = {
+    environment = "dev"
+    auto-delete = "true"
+  }
+}
+
+resource "azurerm_network_security_rule" "allow_icmp_and_tcp" {
+  name                        = "allow-icmp-and-tcp"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_ranges     = ["80", "8080", "1000-2000", "22"]
+  source_address_prefix       = "82.39.6.220/32"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.myadvanced-rg.name
+  network_security_group_name = azurerm_network_security_group.linkedin_nsg.name
+}
 
 # ### COMPUTE
 # ## BASE VARIABLES
