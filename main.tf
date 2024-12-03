@@ -43,11 +43,9 @@ resource "azurerm_subnet" "linkedin_subnet_1" {
   virtual_network_name = azurerm_virtual_network.linkedin_vnet.name
   address_prefixes     = ["10.127.0.0/20"]
 
-  delegation {
-    name = "subnetDelegation"
-    service_delegation {
-      name = "Microsoft.Network/virtualNetworks"
-    }
+tags = {
+    environment = "dev"
+    auto-delete = "true"
   }
 }
 
