@@ -41,12 +41,7 @@ resource "azurerm_subnet" "linkedin_subnet_1" {
   name                 = "linkedin_subnet1"
   resource_group_name  = azurerm_resource_group.myadvanced-rg.name
   virtual_network_name = azurerm_virtual_network.linkedin_vnet.name
-  address_prefixes     = ["10.127.0.0/20"]
-
-tags = {
-    environment = "dev"
-    auto-delete = "true"
-  }
+  address_prefixes     = ["10.127.0.0/20"]   
 }
 
 ### FIREWALL (NSG)
